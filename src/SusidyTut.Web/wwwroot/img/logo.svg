@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="СусідиТут">
+  <rect width="64" height="64" rx="14" fill="#0d6efd"/>
+  <!-- Димар -->
+  <rect x="41" y="13" width="6" height="11" rx="1" fill="#cfe2ff"/>
+  <!-- Дах -->
+  <path d="M32 11 L54 30 a2 2 0 0 1 -1.3 3.5 H11.3 A2 2 0 0 1 10 30 Z" fill="#ffffff"/>
+  <!-- Стіни -->
+  <rect x="15" y="31" width="34" height="22" rx="2" fill="#ffffff"/>
+  <!-- Вікно на горищі -->
+  <circle cx="32" cy="24" r="3.2" fill="#0d6efd"/>
+  <!-- Ліве вікно -->
+  <rect x="19" y="36" width="9" height="8" rx="1.2" fill="#0d6efd"/>
+  <path d="M23.5 36 V44 M19 40 H28" stroke="#ffffff" stroke-width="1.2"/>
+  <!-- Праве вікно -->
+  <rect x="36" y="36" width="9" height="8" rx="1.2" fill="#0d6efd"/>
+  <path d="M40.5 36 V44 M36 40 H45" stroke="#ffffff" stroke-width="1.2"/>
+  <!-- Двері -->
+  <rect x="29" y="40" width="6" height="13" rx="1" fill="#0a58ca"/>
+  <circle cx="33.4" cy="47" r="0.8" fill="#ffffff"/>
+</svg>
