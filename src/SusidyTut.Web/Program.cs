@@ -62,6 +62,8 @@ builder.Services
         messages.SetNonPropertyValueMustBeANumberAccessor(() => "Введіть ціле число");
     });
 
+builder.Services.AddScoped<IProfileService, ProfileService>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
