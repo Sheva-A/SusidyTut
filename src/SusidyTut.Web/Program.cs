@@ -1,4 +1,7 @@
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.WebEncoders;
 using Microsoft.EntityFrameworkCore;
 using SusidyTut.Web.Data;
 using SusidyTut.Web.Infrastructure;
@@ -61,6 +64,10 @@ builder.Services
         messages.SetNonPropertyUnknownValueIsInvalidAccessor(() => "Некоректне значення");
         messages.SetNonPropertyValueMustBeANumberAccessor(() => "Введіть ціле число");
     });
+
+// Кирилиця в HTML без &#x-кодування
+builder.Services.Configure<WebEncoderOptions>(options =>
+    options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All));
 
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IMatchingService, MatchingService>();
