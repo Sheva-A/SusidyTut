@@ -1,0 +1,152 @@
+@page "{id:int}"
+@model SusidyTut.Web.Pages.Search.CandidateModel
+@{
+    var d = Model.Details;
+    ViewData["Title"] = "Анкета кандидата";
+}
+
+<a class="small text-decoration-none" asp-page="/Search/Index">← До пошуку</a>
+<h1 class="h3 mt-2 mb-1">Анкета кандидата</h1>
+<p class="text-muted mb-4">Перегляньте анкету та сумісність за побутовими звичками.</p>
+
+<div class="row g-4">
+    <div class="col-12 col-lg-5">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5 fw-bold mb-3 text-break-all">@d.Name, @d.Age</h2>
+                <dl class="row small mb-0">
+                    <dt class="col-sm-5 text-muted fw-normal">Ім’я</dt>
+                    <dd class="col-sm-7 text-break-all">@d.Name</dd>
+                    <dt class="col-sm-5 text-muted fw-normal">Вік</dt>
+                    <dd class="col-sm-7">@d.Age</dd>
+                    <dt class="col-sm-5 text-muted fw-normal">Стать</dt>
+                    <dd class="col-sm-7">@Format.EnumName(d.Gender)</dd>
+                    <dt class="col-sm-5 text-muted fw-normal">Бажана стать сусіда</dt>
+                    <dd class="col-sm-7">@Format.EnumName(d.PreferredGender)</dd>
+                    <dt class="col-sm-5 text-muted fw-normal">Місто</dt>
+                    <dd class="col-sm-7">@d.City</dd>
+                    <dt class="col-sm-5 text-muted fw-normal">Навчальний заклад</dt>
+                    <dd class="col-sm-7 text-break-all">@(string.IsNullOrEmpty(d.University) ? "–" : d.University)</dd>
+                    <dt class="col-sm-5 text-muted fw-normal">Житло</dt>
+                    <dd class="col-sm-7">@Format.EnumName(d.Housing)</dd>
+                    <dt class="col-sm-5 text-muted fw-normal">Бюджет</dt>
+                    <dd class="col-sm-7">@Format.Budget(d.BudgetMin, d.BudgetMax)</dd>
+                    <dt class="col-sm-5 text-muted fw-normal">Режим сну</dt>
+                    <dd class="col-sm-7">@Format.EnumName(d.SleepSchedule)</dd>
+                    <dt class="col-sm-5 text-muted fw-normal">Чистота</dt>
+                    <dd class="col-sm-7">@Format.EnumName(d.Cleanliness)</dd>
+                    <dt class="col-sm-5 text-muted fw-normal">Гості</dt>
+                    <dd class="col-sm-7">@Format.EnumName(d.Guests)</dd>
+                    <dt class="col-sm-5 text-muted fw-normal">Шум</dt>
+                    <dd class="col-sm-7">@Format.EnumName(d.Noise)</dd>
+                    <dt class="col-sm-5 text-muted fw-normal">Куріння</dt>
+                    <dd class="col-sm-7">@Format.EnumName(d.Smoking)</dd>
+                    <dt class="col-sm-5 text-muted fw-normal">Домашні тварини</dt>
+                    <dd class="col-sm-7">@Format.EnumName(d.Pets)</dd>
+                </dl>
+                @if (!string.IsNullOrEmpty(d.About))
+                {
+                    <h3 class="h6 fw-bold mt-3">Про себе</h3>
+                    <p class="small mb-0 text-break-all" style="white-space: pre-line;">@d.About</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-7">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5 fw-bold mb-3">Сумісність за критеріями</h2>
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th>Критерій</th>
+                                <th>Моє значення</th>
+                                <th>Значення кандидата</th>
+                                <th class="text-end">Бали</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in d.Criteria)
+                            {
+                                <tr>
+                                    <td>@c.Criterion</td>
+                                    <td class="small">@c.MyValue</td>
+                                    <td class="small">@c.CandidateValue</td>
+                                    <td class="text-end">@c.Points</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr class="fw-bold">
+                                <td colspan="3">Разом</td>
+                                <td class="text-end">
+                                    <span class="badge @Format.CompatibilityCss(d.Compatibility) text-nowrap">@d.Compatibility% · @Format.CompatibilityLabel(d.Compatibility)</span>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-body">
+        <h2 class="h5 fw-bold mb-3">Запит на знайомство</h2>
+        @switch (d.RequestState)
+        {
+            case RequestState.None:
+                <form method="post" asp-page-handler="Send" asp-route-id="@d.ProfileId" novalidate>
+                    <div class="mb-3">
+                        <label asp-for="Message" class="form-label"></label>
+                        <textarea asp-for="Message" class="form-control" rows="3" maxlength="300"></textarea>
+                        <span asp-validation-for="Message"></span>
+                    </div>
+                    @if (Model.IsMyProfileActive)
+                    {
+                        <button type="submit" class="btn btn-primary">Надіслати запит</button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-primary" disabled>Надіслати запит</button>
+                        <p class="small text-muted mt-2 mb-0">Анкета неактивна: надсилання запитів недоступне.</p>
+                    }
+                </form>
+                break;
+            case RequestState.SentPending:
+                <p class="mb-0">Запит надіслано – очікує відповіді</p>
+                break;
+            case RequestState.ReceivedPending:
+                <p class="fw-semibold">Отримано запит на знайомство</p>
+                @if (!string.IsNullOrEmpty(d.IncomingMessage))
+                {
+                    <blockquote class="border-start border-3 ps-3 text-muted text-break-all" style="white-space: pre-line;">@d.IncomingMessage</blockquote>
+                }
+                <div class="d-flex flex-wrap gap-2">
+                    <form method="post" asp-page-handler="Accept" asp-route-id="@d.ProfileId">
+                        <input type="hidden" name="requestId" value="@d.RequestId" />
+                        <button type="submit" class="btn btn-success">Прийняти</button>
+                    </form>
+                    <form method="post" asp-page-handler="Decline" asp-route-id="@d.ProfileId">
+                        <input type="hidden" name="requestId" value="@d.RequestId" />
+                        <button type="submit" class="btn btn-danger">Відхилити</button>
+                    </form>
+                </div>
+                break;
+            case RequestState.Accepted:
+                <p class="fw-semibold text-success">Знайомство підтверджено</p>
+                <partial name="_ContactLinks" model="(d.Telegram, d.Phone)" />
+                break;
+            case RequestState.Declined:
+                <p class="mb-0">Запит відхилено</p>
+                break;
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

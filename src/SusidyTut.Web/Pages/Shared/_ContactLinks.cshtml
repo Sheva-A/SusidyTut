@@ -1,0 +1,25 @@
+@model (string? Telegram, string? Phone)
+<div class="row g-3 small">
+    <div class="col-12 col-sm-6">
+        <div class="text-muted">Telegram</div>
+        @if (!string.IsNullOrEmpty(Model.Telegram))
+        {
+            <a href="@Format.TelegramUrl(Model.Telegram)" target="_blank" rel="noopener noreferrer">@Model.Telegram</a>
+        }
+        else
+        {
+            <span>–</span>
+        }
+    </div>
+    <div class="col-12 col-sm-6">
+        <div class="text-muted">Телефон</div>
+        @if (!string.IsNullOrEmpty(Model.Phone))
+        {
+            <a href="tel:@Model.Phone">@Model.Phone</a>
+        }
+        else
+        {
+            <span>–</span>
+        }
+    </div>
+</div>

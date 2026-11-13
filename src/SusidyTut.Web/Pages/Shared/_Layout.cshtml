@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+@inject SusidyTut.Web.Services.IContactRequestService Requests
+<!DOCTYPE html>
 <html lang="uk">
 <head>
     <meta charset="utf-8" />
@@ -12,6 +14,8 @@
         var isAdmin = User.IsInRole(SusidyTut.Web.Data.DbInitializer.AdminRole);
         var isUser = User.IsInRole(SusidyTut.Web.Data.DbInitializer.UserRole);
         var brandPage = isAdmin ? "/Admin/Index" : isUser ? "/Search/Index" : "/Index";
+        // ФІ-01: лічильник вхідних «Очікує»
+        var pendingCount = isUser ? await Requests.CountPendingIncomingAsync(User.FindFirstValue(ClaimTypes.NameIdentifier)!) : 0;
     }
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm mb-4">
@@ -30,7 +34,13 @@
                             <li class="nav-item"><a class="nav-link" asp-page="/Search/Index">Пошук сусідів</a></li>
                             <li class="nav-item"><a class="nav-link" asp-page="/Profile/Index">Моя анкета</a></li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-page="/Requests/Index">Запити</a>
+                                <a class="nav-link" asp-page="/Requests/Index">
+                                    Запити
+                                    @if (pendingCount > 0)
+                                    {
+                                        <span class="badge rounded-pill bg-danger">@pendingCount</span>
+                                    }
+                                </a>
                             </li>
                             <li class="nav-item ms-lg-2">
                                 <partial name="_LogoutForm" />

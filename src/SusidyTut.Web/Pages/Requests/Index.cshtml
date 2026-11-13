@@ -1,0 +1,114 @@
+@page
+@model SusidyTut.Web.Pages.Requests.IndexModel
+@{
+    ViewData["Title"] = "Запити";
+    var tabs = new[] { ("incoming", "Вхідні"), ("sent", "Надіслані"), ("contacts", "Контакти") };
+    var rows = Model.Tab == "sent" ? Model.Overview.Sent : Model.Overview.Incoming;
+}
+
+<h1 class="h3 mb-3">Запити</h1>
+
+<ul class="nav nav-tabs mb-3">
+    @foreach (var (key, title) in tabs)
+    {
+        <li class="nav-item">
+            <a class="nav-link @(Model.Tab == key ? "active" : "")" asp-page="/Requests/Index" asp-route-tab="@key">@title</a>
+        </li>
+    }
+</ul>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        @if (Model.Tab == "contacts")
+        {
+            @if (Model.Overview.Contacts.Count == 0)
+            {
+                <p class="text-muted mb-0">Тут поки нічого немає</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr><th>Ім’я</th><th>Telegram</th><th>Телефон</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in Model.Overview.Contacts)
+                            {
+                                <tr>
+                                    <td><a asp-page="/Search/Candidate" asp-route-id="@c.ProfileId">@c.Name</a></td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(c.Telegram))
+                                        {
+                                            <a href="@Format.TelegramUrl(c.Telegram)" target="_blank" rel="noopener noreferrer">@c.Telegram</a>
+                                        }
+                                        else { <span>–</span> }
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(c.Phone))
+                                        {
+                                            <a href="tel:@c.Phone" class="text-nowrap">@c.Phone</a>
+                                        }
+                                        else { <span>–</span> }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        }
+        else if (rows.Count == 0)
+        {
+            <p class="text-muted mb-0">Тут поки нічого немає</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Ім’я</th>
+                            <th>Сумісність</th>
+                            <th>Повідомлення</th>
+                            <th>Дата</th>
+                            <th>Статус</th>
+                            @if (Model.Tab == "incoming")
+                            {
+                                <th></th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in rows)
+                        {
+                            <tr>
+                                <td><a asp-page="/Search/Candidate" asp-route-id="@r.OtherProfileId">@r.OtherName</a></td>
+                                <td><span class="badge @Format.CompatibilityCss(r.Compatibility)">@r.Compatibility%</span></td>
+                                <td class="small text-break-all" style="min-width: 10rem;">@(string.IsNullOrEmpty(r.Message) ? "–" : r.Message)</td>
+                                <td class="small text-nowrap">@Format.KyivDateTime(r.CreatedAt)</td>
+                                <td><span class="badge @Format.StatusCss(r.Status)">@Format.EnumName(r.Status)</span></td>
+                                @if (Model.Tab == "incoming")
+                                {
+                                    <td class="text-nowrap">
+                                        @if (r.Status == RequestStatus.Pending)
+                                        {
+                                            <form method="post" asp-page-handler="Accept" class="d-inline">
+                                                <input type="hidden" name="requestId" value="@r.RequestId" />
+                                                <button type="submit" class="btn btn-sm btn-success">Прийняти</button>
+                                            </form>
+                                            <form method="post" asp-page-handler="Decline" class="d-inline">
+                                                <input type="hidden" name="requestId" value="@r.RequestId" />
+                                                <button type="submit" class="btn btn-sm btn-danger">Відхилити</button>
+                                            </form>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

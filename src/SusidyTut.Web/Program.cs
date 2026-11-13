@@ -64,6 +64,7 @@ builder.Services
 
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IMatchingService, MatchingService>();
+builder.Services.AddScoped<IContactRequestService, ContactRequestService>();
 
 var app = builder.Build();
 
