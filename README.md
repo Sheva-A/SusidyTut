@@ -48,6 +48,8 @@ docker compose down -v
 docker compose logs web
 ```
 
+Покрокова інструкція для Rider (Docker Compose і налагодження): [docs/DEMO.md](docs/DEMO.md).
+
 ## Налаштування
 
 Параметри задаються змінними середовища в `docker-compose.yml` (без перекомпіляції):

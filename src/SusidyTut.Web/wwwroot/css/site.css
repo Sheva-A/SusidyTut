@@ -29,17 +29,6 @@ body > .container {
   overflow-wrap: anywhere;
 }
 
-.brand-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  background-color: var(--bs-primary-bg-subtle);
-  color: var(--bs-primary);
-}
-
 .step-number {
   display: inline-flex;
   align-items: center;
