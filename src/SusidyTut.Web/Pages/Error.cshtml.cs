@@ -1,20 +1,35 @@
-using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SusidyTut.Web.Infrastructure;
 
 namespace SusidyTut.Web.Pages;
 
-[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+[AllowAnonymous]
 [IgnoreAntiforgeryToken]
+[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 public class ErrorModel : PageModel
 {
-    public string? RequestId { get; set; }
+    public int Code { get; private set; }
 
-    public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+    public string Message { get; private set; } = string.Empty;
 
-    public void OnGet()
+    public string HomeUrl { get; private set; } = "/";
+
+    public void OnGet(int? code) => Fill(code);
+
+    public void OnPost(int? code) => Fill(code);
+
+    private void Fill(int? code)
     {
-        RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+        Code = code is 403 or 404 ? code.Value : 500;
+        Message = Code switch
+        {
+            404 => "Сторінку не знайдено",
+            403 => "Доступ заборонено",
+            _ => "Сталася помилка. Спробуйте пізніше."
+        };
+        Response.StatusCode = Code;
+        HomeUrl = Url.Page(Format.HomePage(User)) ?? "/";
     }
 }
-
