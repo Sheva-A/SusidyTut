@@ -1,0 +1,127 @@
+@page
+@model SusidyTut.Web.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Адміністрування";
+    var stats = new (string Title, int Value)[]
+    {
+        ("Користувачів", Model.Stats.UsersTotal),
+        ("Заблоковано", Model.Stats.UsersBlocked),
+        ("Активних анкет", Model.Stats.ActiveProfiles),
+        ("Запитів «Очікує»", Model.Stats.RequestsPending),
+        ("Запитів «Прийнято»", Model.Stats.RequestsAccepted),
+        ("Запитів «Відхилено»", Model.Stats.RequestsDeclined)
+    };
+}
+
+<h1 class="h3 mb-3">Адміністрування</h1>
+
+<div class="row row-cols-2 row-cols-md-3 row-cols-xl-6 g-3 mb-4">
+    @foreach (var (title, value) in stats)
+    {
+        <div class="col">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="stat-value">@value</div>
+                    <div class="small text-muted">@title</div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-start mb-3" novalidate>
+            <div class="col-12 col-md-6 col-lg-4">
+                <label asp-for="Email" class="visually-hidden"></label>
+                <input asp-for="Email" class="form-control" placeholder="Пошук за email" maxlength="100" />
+                <span asp-validation-for="Email"></span>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Знайти</button>
+            </div>
+        </form>
+
+        @if (Model.Users.Items.Count == 0)
+        {
+            <p class="text-muted mb-0">Тут поки нічого немає</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Ім’я</th>
+                            <th>Дата реєстрації</th>
+                            <th>Статус</th>
+                            <th>Дія</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var u in Model.Users.Items)
+                        {
+                            <tr>
+                                <td class="text-break-all">@u.Email</td>
+                                <td class="text-break-all">@(u.Name ?? "–")</td>
+                                <td class="text-nowrap">@Format.KyivDate(u.RegisteredAt)</td>
+                                <td>
+                                    @if (u.IsBlocked)
+                                    {
+                                        <span class="badge bg-danger">Заблокований</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">Активний</span>
+                                    }
+                                </td>
+                                <td>
+                                    <form method="post" asp-page-handler="@(u.IsBlocked ? "Unblock" : "Block")" class="d-inline">
+                                        <input type="hidden" name="userId" value="@u.Id" />
+                                        <input type="hidden" name="email" value="@Model.Email" />
+                                        <input type="hidden" name="p" value="@Model.Users.Page" />
+                                        @if (u.IsBlocked)
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-outline-success text-nowrap">Розблокувати</button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-outline-danger text-nowrap">Заблокувати</button>
+                                        }
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
+            <span class="small text-muted">Сторінка @Model.Users.Page з @Model.Users.TotalPages</span>
+            <div class="d-flex gap-2">
+                @if (Model.Users.HasPrevious)
+                {
+                    <a class="btn btn-outline-secondary btn-sm" asp-page="/Admin/Index" asp-route-email="@Model.Email" asp-route-p="@(Model.Users.Page - 1)">Попередня</a>
+                }
+                else
+                {
+                    <span class="btn btn-outline-secondary btn-sm disabled" aria-disabled="true">Попередня</span>
+                }
+                @if (Model.Users.HasNext)
+                {
+                    <a class="btn btn-outline-secondary btn-sm" asp-page="/Admin/Index" asp-route-email="@Model.Email" asp-route-p="@(Model.Users.Page + 1)">Наступна</a>
+                }
+                else
+                {
+                    <span class="btn btn-outline-secondary btn-sm disabled" aria-disabled="true">Наступна</span>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
