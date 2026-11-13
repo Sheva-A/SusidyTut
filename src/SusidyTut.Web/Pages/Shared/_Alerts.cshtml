@@ -1,6 +1,7 @@
 @{
     var success = TempData["Success"] as string;
     var error = TempData["Error"] as string;
+    var warning = TempData["Warning"] as string;
 }
 @if (!string.IsNullOrEmpty(success))
 {
@@ -9,4 +10,8 @@
 @if (!string.IsNullOrEmpty(error))
 {
     <div class="alert alert-danger" role="alert">@error</div>
+}
+@if (!string.IsNullOrEmpty(warning))
+{
+    <div class="alert alert-warning" role="alert">@warning</div>
 }
