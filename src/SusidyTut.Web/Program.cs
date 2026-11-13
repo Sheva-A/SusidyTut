@@ -63,6 +63,7 @@ builder.Services
     });
 
 builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IMatchingService, MatchingService>();
 
 var app = builder.Build();
 

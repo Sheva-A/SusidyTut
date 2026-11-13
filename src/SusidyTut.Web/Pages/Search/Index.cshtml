@@ -1,0 +1,58 @@
+@page
+@model SusidyTut.Web.Pages.Search.IndexModel
+@{
+    ViewData["Title"] = "Пошук сусідів";
+}
+
+@if (!Model.IsProfileActive)
+{
+    <div class="alert alert-warning" role="alert">
+        Анкета неактивна: інші користувачі її не бачать, надсилання запитів недоступне
+    </div>
+}
+
+<h1 class="h3 mb-1">Знайдено кандидатів: @Model.Result.TotalCount</h1>
+@if (Model.Result.TotalCount > 50)
+{
+    <p class="text-muted">Показано 50 найбільш сумісних</p>
+}
+
+@if (Model.Result.TotalCount == 0)
+{
+    <div class="card shadow-sm mt-3">
+        <div class="card-body text-center p-4">
+            <p class="mb-3">Поки що немає сумісних кандидатів. Можна розширити діапазон бюджету або змінити бажану стать сусіда в анкеті.</p>
+            <a class="btn btn-primary" asp-page="/Profile/Index">Редагувати анкету</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 mt-1">
+        @foreach (var card in Model.Result.Cards)
+        {
+            var stateText = RequestStates.CardText(card.RequestState);
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+                            <h2 class="h6 fw-bold mb-0 text-break-all">@card.Name, @card.Age</h2>
+                            <span class="badge @Format.CompatibilityCss(card.Compatibility) text-nowrap">@card.Compatibility% · @Format.CompatibilityLabel(card.Compatibility)</span>
+                        </div>
+                        @if (!string.IsNullOrEmpty(card.University))
+                        {
+                            <p class="small text-muted mb-2 text-break-all">@card.University</p>
+                        }
+                        <p class="small mb-1"><span class="text-muted">Бюджет:</span> @Format.Budget(card.BudgetMin, card.BudgetMax)</p>
+                        <p class="small mb-3"><span class="text-muted">Житло:</span> @Format.EnumName(card.Housing)</p>
+                        @if (stateText is not null)
+                        {
+                            <p class="small fw-semibold text-primary mb-2">@stateText</p>
+                        }
+                        <a class="btn btn-outline-primary mt-auto" asp-page="/Search/Candidate" asp-route-id="@card.ProfileId">Переглянути анкету</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
