@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: susidytut
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d susidytut"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      dockerfile: src/SusidyTut.Web/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Default: "Host=db;Port=5432;Database=susidytut;Username=postgres;Password=postgres"
+      Admin__Email: "admin@susidytut.local"
+      Admin__Password: "Admin12345"
+      DemoData__Enabled: "true"
+      DemoData__ProfilesCount: "60"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
