@@ -52,7 +52,7 @@ docker compose logs web        # журнал застосунку
 
 Потрібен .NET 10 SDK. Найпростіше відкрити проєкт через **WSL-середовище Rider**: *File → Remote Development → WSL → Ubuntu* → оберіть `SusidyTut.sln`. Тоді Rider використовує SDK, вже встановлений у WSL.
 
-> **Важливо:** у WSL є два .NET — системний `/usr/bin/dotnet` (лише SDK 8) і `~/.dotnet` (SDK 10). Вкажіть Rider правильний: *Settings → Build, Execution, Deployment → Toolset and Build* → **.NET CLI executable path** = `/home/sheva_a/.dotnet/dotnet`. Без цього панель файлів буде порожньою.
+> **Важливо:** у WSL є два .NET — системний `/usr/bin/dotnet` (лише SDK 8) і `~/.dotnet` (SDK 10). Перевірте, що Rider використовує правильний: *Settings → Build, Execution, Deployment → Toolset and Build* → **.NET CLI executable path** = `/home/sheva_a/.dotnet/dotnet`.
 
 1. Запустіть лише базу:
    ```bash
@@ -115,7 +115,7 @@ COMMIT;"
 
 | Проблема | Що зробити |
 |---|---|
-| У Rider порожня панель файлів («Nothing to show») | Rider узяв системний .NET 8 замість .NET 10. *Settings → Build, Execution, Deployment → Toolset and Build* → **.NET CLI executable path** = `/home/sheva_a/.dotnet/dotnet` → *Save* → *File → Reload All from Disk* |
+| У Rider порожня панель файлів («Nothing to show») | Збій ініціалізації панелі в режимі WSL (проєкт при цьому завантажений). Двічі натисніть `Alt+1` (закрити й відкрити панель) і у випадному списку вгорі панелі оберіть **Solution**. Не допомогло — закрийте вікно Rider і відкрийте проєкт знову через *File → Recent Projects* |
 | `docker: command not found` у терміналі | Docker Desktop не запущено або вимкнено WSL integration для Ubuntu |
 | `port is already allocated` (8080 або 5432) | Порт зайнятий іншою програмою (наприклад, локальним PostgreSQL). Зупиніть її або змініть лівий номер порту в `docker-compose.yml` |
 | Сторінка не відкривається одразу після запуску | Зачекайте 20–30 с і перегляньте журнал: `docker compose logs web` |
