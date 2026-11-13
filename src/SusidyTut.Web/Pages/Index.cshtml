@@ -1,10 +1,50 @@
-﻿@page
+@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Головна";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="text-center py-5">
+    <div class="brand-icon mx-auto mb-3 fs-4" style="width:3.5rem;height:3.5rem;">⌂</div>
+    <h1 class="display-5 fw-bold">СусідиТут</h1>
+    <p class="lead text-muted mx-auto" style="max-width:40rem;">
+        СусідиТут допомагає студентам знайти сусіда для спільної оренди житла за побутовими звичками та бюджетом
+    </p>
+    <div class="d-flex flex-wrap justify-content-center gap-2 mt-4">
+        <a class="btn btn-primary btn-lg" asp-page="/Account/Register">Зареєструватися</a>
+        <a class="btn btn-outline-primary btn-lg" asp-page="/Account/Login">Увійти</a>
+    </div>
+</section>
+
+<section class="py-4">
+    <h2 class="h4 text-center mb-4">Як це працює</h2>
+    <div class="row g-3">
+        <div class="col-12 col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <span class="step-number mb-3">1</span>
+                    <h3 class="h6 fw-bold">1. Заповніть анкету</h3>
+                    <p class="text-muted small mb-0">Вкажіть бюджет, місто та побутові звички.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <span class="step-number mb-3">2</span>
+                    <h3 class="h6 fw-bold">2. Перегляньте сумісних кандидатів</h3>
+                    <p class="text-muted small mb-0">Сервіс сам підбере сусідів і порахує відсоток сумісності.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <span class="step-number mb-3">3</span>
+                    <h3 class="h6 fw-bold">3. Надішліть запит на знайомство</h3>
+                    <p class="text-muted small mb-0">Після прийняття запиту відкриються контакти.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SusidyTut.Web.Data;
+using SusidyTut.Web.Infrastructure;
 using SusidyTut.Web.Models;
+using SusidyTut.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,9 +26,41 @@ builder.Services
         options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
         options.Lockout.AllowedForNewUsers = true;
     })
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddSignInManager<AppSignInManager>();
 
-builder.Services.AddRazorPages();
+// ФА-03: сесія заблокованого діє не довше 1 хв
+builder.Services.Configure<SecurityStampValidatorOptions>(options =>
+    options.ValidationInterval = TimeSpan.FromMinutes(1));
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    options.AccessDeniedPath = "/Error/403";
+    options.ExpireTimeSpan = TimeSpan.FromHours(8);
+    options.SlidingExpiration = true;
+});
+
+builder.Services
+    .AddRazorPages()
+    .AddMvcOptions(options =>
+    {
+        options.ModelBinderProviders.Insert(0, new TrimStringModelBinderProvider());
+        options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+
+        var messages = options.ModelBindingMessageProvider;
+        messages.SetValueMustNotBeNullAccessor(_ => "Заповніть це поле");
+        messages.SetMissingBindRequiredValueAccessor(_ => "Заповніть це поле");
+        messages.SetMissingKeyOrValueAccessor(() => "Заповніть це поле");
+        messages.SetAttemptedValueIsInvalidAccessor((_, _) => "Некоректне значення");
+        messages.SetUnknownValueIsInvalidAccessor(_ => "Некоректне значення");
+        messages.SetValueIsInvalidAccessor(_ => "Некоректне значення");
+        messages.SetValueMustBeANumberAccessor(_ => "Введіть ціле число");
+        messages.SetNonPropertyAttemptedValueIsInvalidAccessor(_ => "Некоректне значення");
+        messages.SetNonPropertyUnknownValueIsInvalidAccessor(() => "Некоректне значення");
+        messages.SetNonPropertyValueMustBeANumberAccessor(() => "Введіть ціле число");
+    });
 
 var app = builder.Build();
 
@@ -35,7 +69,10 @@ using (var scope = app.Services.CreateScope())
     await DbInitializer.InitializeAsync(scope.ServiceProvider);
 }
 
-app.UseExceptionHandler("/Error");
+// Е-09 для 500, 404, 403
+app.UseExceptionHandler("/Error/500");
+app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
