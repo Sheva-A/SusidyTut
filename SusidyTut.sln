@@ -7,6 +7,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SusidyTut.Web", "src\SusidyTut.Web\SusidyTut.Web.csproj", "{900EF59E-19EF-4C3D-A9D8-0C1FCD190BC7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6A1C2E4B-3D5F-4A7B-9C8D-1E2F3A4B5C6D}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.gitignore = .gitignore
+		CLAUDE.md = CLAUDE.md
+		docker-compose.yml = docker-compose.yml
+		docs\DEMO.md = docs\DEMO.md
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
